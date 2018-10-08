@@ -94,16 +94,10 @@
                 background: yellow;
                 z-index: 100;
             }
-            .big_title {
-                position: absolute;
-                top: 0;
-                left: 10%;
-                font-size: 5rem;
-            }
             .big_title_s {
                 position: absolute;
                 top: 7%;
-                left: 10%;
+                left: 0;
                 font-size: 2.5rem;
             }
             .big_ip {
@@ -119,6 +113,19 @@
                 height: 2rem;
                 border-radius: 8px;
                 margin-left: 5px;
+            }
+
+            .box2_outer {
+            	overflow: hidden;
+            	position: relative;
+            	height: 100%;
+            }
+
+            .box2_text {
+				position: absolute;
+                top: 0;
+                left: 0;
+                font-size: 5rem;
             }
         </style>
     </head>
@@ -145,12 +152,14 @@
         </div>
         <div class="box1 box">box1</div>
         <div class="box2 box">
-            <div class="box2_text">
-                <span class="big_title">iPhone X<i class="special_s">s</i></span>
-                <span class="big_title_s">看见更远的未来</span>
-            </div>
+        	<div class="box2_outer">
+	            <div class="box2_text">
+	                <span class="big_title">iPhone X<i class="special_s">s</i></span>
+	                <span class="big_title_s">看见更远的未来</span>
+	            </div>
+        	</div>
             <div class="box2_img">
-                <img src="iphone.png" class="big_ip">
+                <img src="./src/assets/images/iphone.png" class="big_ip">
             </div>
         </div>
         <div class="box3 box">box3</div>
@@ -238,7 +247,7 @@
             });
 
             $('.sider').hide();
-            $('.box2_text').hide();
+            // $('.box2_text').hide();
             $(window).scroll(function () {
                 let scrollTop = $(document).scrollTop();
                 if(scrollTop > 500) {
@@ -247,11 +256,17 @@
                     $('.sider').fadeOut();
                 }
                 if (scrollTop >= 1000) {
-                    $('.box2_text').fadeIn('slow');
-                    $('.box2_img').fadeIn('slow');
+                    // $('.box2_text').fadeIn(2000);
+                    $('.box2_text').animate({
+                    	left: '0'
+                    }, 1000);
+                    $('.box2_img').fadeIn(500);
                 } else {
-                    $('.box2_text').fadeOut('slow');
-                    $('.box2_img').fadeOut('slow');
+                    // $('.box2_text').fadeOut(2000);
+                    $('.box2_text').animate({
+                    	left: '-100%'
+                    });
+                    $('.box2_img').fadeOut(500);
                 }
             })
         </script>
