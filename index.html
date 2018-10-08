@@ -1,0 +1,259 @@
+<!--
+    Created on : 2013-12-18 16:26:23
+    Author     : Liuxiaofan
+-->
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>滚屏动画</title>
+      <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+        <style type="text/css">
+            body{
+                padding: 0;
+                margin: 0;
+                font-size: 12px;
+                font-family: 微软雅黑;
+            }
+            .header{
+                width: 100%;
+                height: 80px;
+                line-height: 80px;
+                text-align: center;
+                background: #131111;
+                color: #fff;
+                opacity:0.7;
+                position: fixed;
+                z-index: 999;
+            }
+            .box{
+                width: 100%;
+                height: 1000px;
+                text-align: center;
+                line-height: 1000px;
+            }
+            .box1{
+                background: #36c4d5;
+            }
+            .box2{
+                background: #000000;
+                position: relative;
+                color: #fff;
+            }
+            .box3{
+                background: #86cf80;
+            }
+            .box4{
+                background: #add455;
+            }
+            .box5{
+                background: #d5da2b;
+            }
+            .sider{
+                position: fixed;
+                right: 50px;
+                top:40%;
+                z-index: 999;
+            }
+            .sider ul{
+                list-style: none;
+            }
+            .sider li{
+                width: 16px;
+                height: 16px;
+                padding-top: 10px;
+                cursor: pointer;
+            }
+            .sider span{
+                display: block;
+                background: #777;
+                width: 4px;
+                height: 4px;
+                border-radius:20px;
+                margin: 0 auto;
+            }
+            .sider span.cur{
+                width: 8px;
+                height: 8px;
+                border: 1px solid #777;
+                background: rgba(0, 0, 0, 0);
+            }
+            .footer{
+                width: 100%;
+                height: 300px;
+                background: #333;
+                color: #fff;
+                text-align: center;
+            }
+            .sidebar {
+                width: 30px;
+                height: 200px;
+                position: fixed;
+                right: 0;
+                top: 50%;
+                background: yellow;
+                z-index: 100;
+            }
+            .big_title {
+                position: absolute;
+                top: 0;
+                left: 10%;
+                font-size: 5rem;
+            }
+            .big_title_s {
+                position: absolute;
+                top: 7%;
+                left: 10%;
+                font-size: 2.5rem;
+            }
+            .big_ip {
+                position: absolute;
+                bottom: 0;
+                right: 10%;
+            }
+            .special_s{
+                display: inline-block;
+                font-style: normal;
+                border: 3px solid #fff;
+                width: 2rem;
+                height: 2rem;
+                border-radius: 8px;
+                margin-left: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">header</div>
+        <div class="sider">
+            <ul>
+                <li>
+                    <span class="cur"></span>
+                </li>
+                <li>
+                    <span></span>
+                </li>
+                <li>
+                    <span></span>
+                </li>
+                <li>
+                    <span></span>
+                </li>
+                <li>
+                    <span></span>
+                </li>
+            </ul>
+        </div>
+        <div class="box1 box">box1</div>
+        <div class="box2 box">
+            <div class="box2_text">
+                <span class="big_title">iPhone X<i class="special_s">s</i></span>
+                <span class="big_title_s">看见更远的未来</span>
+            </div>
+            <div class="box2_img">
+                <img src="iphone.png" class="big_ip">
+            </div>
+        </div>
+        <div class="box3 box">box3</div>
+        <div class="box4 box">box4</div>
+        <div class="box5 box">box5</div>
+        <div class="footer">footer</div>
+        <script>
+            $(function() {
+                var bodyEl = $('html,body'); 
+                //ff和ie需要html，chrome需要body，万恶的兼容性啊
+                var siderBtn = $('.sider li');
+                var boxEl = $('.box');
+                var boxIndex = 0; 
+                //定义一个变量保存上次滚动到的是第几个box
+                // 隐藏页面滚动条并且初始化页面位置为顶部
+                bodyEl.css({'overflow': 'hidden'}).scrollTop(0);
+                /**
+                 * 为按钮绑定事件
+                 */
+                siderBtn.click(function() {
+                    var btnIndex = $(this).index();
+                    var tarBoxTop = boxEl.eq(btnIndex).offset().top; //取得box的offset.top值
+                    var isAnimate = bodyEl.is(":animated"); //当前是否处于动画状态
+                    var m = btnIndex - boxIndex; //算当前的按钮和当前显示的box的差值
+                    //如果是0就不操作于不是动画状态才执行
+                    if (m != 0 && !isAnimate) {
+                        //如果是1代表是临近的
+                        if (m == 1 || m == -1) {
+                            bodyEl.animate({scrollTop: tarBoxTop}, 1000);
+                        } else {
+                            bodyEl.fadeOut(400);
+                            setTimeout(function() {
+                                bodyEl.fadeIn(400).scrollTop(tarBoxTop);
+                            }, 400);
+                        }
+                        //改变右侧按钮的焦点
+                        $('span', siderBtn).removeClass('cur');
+                        $('span', $(this)).addClass('cur');
+                        boxIndex = btnIndex;
+                    }
+                });
+                /**
+                 * 鼠标滚轮触发后的事件
+                 */
+                var mouseWheel = function(event) {
+                    if (!event) {
+                        event = window.event;
+                    }
+                    var delta = 0;//为了保存滚轮的滚动值
+                    var tarBoxTop = boxEl.eq(boxIndex).offset().top; //取得当前box的offset.top值
+                    var isAnimate = bodyEl.is(":animated"); //当前是否处于动画状态
+                    //取滚轮滚动的值
+                    if (event.wheelDelta) {
+                        delta = event.wheelDelta / 120;//兼容chrome
+                        if (window.opera) {//兼容opera
+                            delta = -delta;
+                        }
+                    } else if (event.detail) {
+                        delta = -event.detail / 3;//兼容ff
+                    }
+                    //判断是向上滚还是向下
+                    if (delta > 0) {
+                        if (boxIndex != 0) {
+                            if (!isAnimate) {
+                                bodyEl.animate({scrollTop: tarBoxTop - 1000}, 1000);
+                                boxIndex--;
+                            }
+                        }
+                    } else {
+                        if (boxIndex != 4) {
+                            if (!isAnimate) {
+                                bodyEl.animate({scrollTop: tarBoxTop + 1000}, 1000);
+                                boxIndex++;
+                            }
+                        }
+                    }
+                    //改变右侧按钮的焦点
+                    $('span', siderBtn).removeClass('cur').eq(boxIndex).addClass('cur');
+                };
+                //绑定滚轮事件
+                if (window.addEventListener) {
+                    window.addEventListener('DOMMouseScroll', mouseWheel, false); //火狐和IE
+                }
+                window.onmousewheel = document.onmousewheel = mouseWheel; //chrome
+            });
+
+            $('.sider').hide();
+            $('.box2_text').hide();
+            $(window).scroll(function () {
+                let scrollTop = $(document).scrollTop();
+                if(scrollTop > 500) {
+                    $('.sider').fadeIn();
+                } else {
+                    $('.sider').fadeOut();
+                }
+                if (scrollTop >= 1000) {
+                    $('.box2_text').fadeIn('slow');
+                    $('.box2_img').fadeIn('slow');
+                } else {
+                    $('.box2_text').fadeOut('slow');
+                    $('.box2_img').fadeOut('slow');
+                }
+            })
+        </script>
+    </body>
+</html>
